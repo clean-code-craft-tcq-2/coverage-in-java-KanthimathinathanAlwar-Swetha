@@ -67,16 +67,10 @@ public class TypewiseAlert {
                            TO_EMAIL
   };
 
-  public class BatteryCharacter {
-
-    public CoolingType coolingType;
-    public String brand;
-  }
-
-  public static void checkAndAlert(final AlertTarget alertTarget, final BatteryCharacter batteryChar,
+  public static void checkAndAlert(final AlertTarget alertTarget, final CoolingType coolingType,
       final double temperatureInC) {
 
-    BreachType breachType = classifyTemperatureBreach(batteryChar.coolingType, temperatureInC);
+    BreachType breachType = classifyTemperatureBreach(coolingType, temperatureInC);
 
     if (alertTarget.equals(AlertTarget.TO_CONTROLLER)) {
       sendToController(breachType);
@@ -88,7 +82,7 @@ public class TypewiseAlert {
 
   public static void sendToController(final BreachType breachType) {
     int header = 0xfeed;
-    System.out.printf("%i : %i\n", header, breachType);
+    System.out.printf("%d : %s\n", header, breachType.toString());
   }
 
   public static void mailContent(final String recepient, final String BreachType) {
