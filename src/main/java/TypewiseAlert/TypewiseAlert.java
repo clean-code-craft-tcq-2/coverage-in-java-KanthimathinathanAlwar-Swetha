@@ -1,87 +1,106 @@
 package TypewiseAlert;
 
-public class TypewiseAlert 
-{
-    public enum BreachType {
-      NORMAL,
-      TOO_LOW,
-      TOO_HIGH
-    };
-    public static BreachType inferBreach(double value, double lowerLimit, double upperLimit) {
-      if(value < lowerLimit) {
-        return BreachType.TOO_LOW;
-      }
-      if(value > upperLimit) {
-        return BreachType.TOO_HIGH;
-      }
-      return BreachType.NORMAL;
-    }
-    public enum CoolingType {
-      PASSIVE_COOLING,
-      HI_ACTIVE_COOLING,
-      MED_ACTIVE_COOLING
-    };
-    public static BreachType classifyTemperatureBreach(
-        CoolingType coolingType, double temperatureInC) {
-      int lowerLimit = 0;
-      int upperLimit = 0;
-      switch(coolingType) {
-        case PASSIVE_COOLING:
-          lowerLimit = 0;
-          upperLimit = 35;
-          break;
-        case HI_ACTIVE_COOLING:
-          lowerLimit = 0;
-          upperLimit = 45;
-          break;
-        case MED_ACTIVE_COOLING:
-          lowerLimit = 0;
-          upperLimit = 40;
-          break;
-      }
-      return inferBreach(temperatureInC, lowerLimit, upperLimit);
-    }
-    public enum AlertTarget{
-      TO_CONTROLLER,
-      TO_EMAIL
-    };
-    public class BatteryCharacter {
-      public CoolingType coolingType;
-      public String brand;
-    }
-    public static void checkAndAlert(
-        AlertTarget alertTarget, BatteryCharacter batteryChar, double temperatureInC) {
+public class TypewiseAlert {
 
-      BreachType breachType = classifyTemperatureBreach(
-        batteryChar.coolingType, temperatureInC
-      );
+  public enum BreachType {
+                          NORMAL("Normal"),
+                          TOO_LOW("too low"),
+                          TOO_HIGH("too high");
 
-      switch(alertTarget) {
-        case TO_CONTROLLER:
-          sendToController(breachType);
-          break;
-        case TO_EMAIL:
-          sendToEmail(breachType);
-          break;
-      }
+    private final String displayText;
+
+    private BreachType(final String displayText) {
+      this.displayText = displayText;
     }
-    public static void sendToController(BreachType breachType) {
-      int header = 0xfeed;
-      System.out.printf("%i : %i\n", header, breachType);
+
+    @Override
+    public String toString() {
+      return this.displayText;
     }
-    public static void sendToEmail(BreachType breachType) {
-      String recepient = "a.b@c.com";
-      switch(breachType) {
-        case TOO_LOW:
-          System.out.printf("To: %s\n", recepient);
-          System.out.println("Hi, the temperature is too low\n");
-          break;
-        case TOO_HIGH:
-          System.out.printf("To: %s\n", recepient);
-          System.out.println("Hi, the temperature is too high\n");
-          break;
-        case NORMAL:
-          break;
-      }
+  };
+
+  public static BreachType inferBreach(final double value, final double lowerLimit, final double upperLimit) {
+    if (value < lowerLimit) {
+      return BreachType.TOO_LOW;
     }
+    if (value > upperLimit) {
+      return BreachType.TOO_HIGH;
+    }
+    return BreachType.NORMAL;
+  }
+
+  public enum CoolingType {
+                           PASSIVE_COOLING("Passive Cooling", 0, 35),
+                           HI_ACTIVE_COOLING("Hi active Cooling", 0, 45),
+                           MED_ACTIVE_COOLING("Med active Cooling", 0, 40);
+
+    private final String displayText;
+    private final int lowerLimit;
+    private final int upperLimit;
+
+    private CoolingType(final String displayText, final int lowerLimit, final int upperLimit) {
+      this.displayText = displayText;
+      this.lowerLimit = lowerLimit;
+      this.upperLimit = upperLimit;
+    }
+
+    @Override
+    public String toString() {
+      return this.displayText;
+    }
+
+    public int getLowerLimit() {
+      return this.lowerLimit;
+    }
+
+    public int getUpperLimit() {
+      return this.upperLimit;
+    }
+  };
+
+  public static BreachType classifyTemperatureBreach(final CoolingType coolingType, final double temperatureInC) {
+    return inferBreach(temperatureInC, coolingType.getLowerLimit(), coolingType.getUpperLimit());
+  }
+
+  public enum AlertTarget {
+                           TO_CONTROLLER,
+                           TO_EMAIL
+  };
+
+  public class BatteryCharacter {
+
+    public CoolingType coolingType;
+    public String brand;
+  }
+
+  public static void checkAndAlert(final AlertTarget alertTarget, final BatteryCharacter batteryChar,
+      final double temperatureInC) {
+
+    BreachType breachType = classifyTemperatureBreach(batteryChar.coolingType, temperatureInC);
+
+    if (alertTarget.equals(AlertTarget.TO_CONTROLLER)) {
+      sendToController(breachType);
+    }
+    if (alertTarget.equals(AlertTarget.TO_EMAIL)) {
+      sendToEmail(breachType);
+    }
+  }
+
+  public static void sendToController(final BreachType breachType) {
+    int header = 0xfeed;
+    System.out.printf("%i : %i\n", header, breachType);
+  }
+
+  public static void mailContent(final String recepient, final String BreachType) {
+    System.out.printf("To: %s\n", recepient);
+    System.out.println("Hi, the temperature is " + BreachType + "\n");
+  }
+
+  public static void sendToEmail(final BreachType breachType) {
+    String recepient = "a.b@c.com";
+    if (!breachType.equals(BreachType.NORMAL)) {
+      mailContent(recepient, breachType.toString());
+    }
+
+  }
 }
