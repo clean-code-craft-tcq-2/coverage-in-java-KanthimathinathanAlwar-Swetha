@@ -4,7 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-public class TypewiseAlertTest {
+public class TypewiseAlertTest extends TypewiseAlert {
 
   @Test
   public void testInferBreach() {
