@@ -27,5 +27,6 @@ public class TypewiseAlertTest {
   public void testCheckAndAlert() {
     TypewiseAlert.checkAndAlert(AlertTarget.ControllerAlert, CoolingType.HiActiveCooling, 35);
     TypewiseAlert.checkAndAlert(AlertTarget.MailAlert, CoolingType.PassiveCooling, 55);
+    TypewiseAlert.checkAndAlert(AlertTarget.MailAlert, CoolingType.MedActiveCooling, 30);
   }
 }
