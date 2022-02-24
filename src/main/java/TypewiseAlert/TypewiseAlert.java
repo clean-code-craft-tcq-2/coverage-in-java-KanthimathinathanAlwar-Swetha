@@ -50,8 +50,8 @@ interface CoolingType {
   public BreachType classifyBreach(final double temp);
 
   CoolingType PassiveCooling = tempInC -> TypewiseAlert.inferBreach(tempInC, 0, 35);
-  CoolingType HiActiveCooling = tempInC -> TypewiseAlert.inferBreach(tempInC, 0, 35);
-  CoolingType MedActiveCooling = tempInC -> TypewiseAlert.inferBreach(tempInC, 0, 35);
+  CoolingType HiActiveCooling = tempInC -> TypewiseAlert.inferBreach(tempInC, 0, 45);
+  CoolingType MedActiveCooling = tempInC -> TypewiseAlert.inferBreach(tempInC, 0, 40);
 
 }
 
